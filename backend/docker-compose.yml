@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8501:8501"  # Streamlit port
+    volumes:
+      - ./ollama_data:/root/.ollama # Persist Ollama embeddings
+    environment:
+      - QDRANT_HOST=qdrant
+      - OLLAMA_HOST=localhost
+      - FIRESTORE_EMULATOR_HOST=host.docker.internal:9199
+    depends_on:
+      - qdrant
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./qdrant_data:/qdrant/storage # Persist Qdrant data
+
+volumes:
+  qdrant_data:
+  ollama_data:
